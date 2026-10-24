@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Użytkownicy</h1>
+<p><a href="{% url 'user_add' %}">Dodaj użytkownika</a></p>
+<table>
+  <tr><th>Login</th><th>Rola</th><th>Status</th><th>Akcje</th></tr>
+  {% for u in users %}
+  <tr>
+    <td>{{ u.username }}</td>
+    <td>{{ u.role }}</td>
+    <td>{% if u.is_active %}aktywne{% else %}zablokowane{% endif %}{% if u.must_change_password %}, hasło jednorazowe{% endif %}</td>
+    <td>
+      <a href="{% url 'user_edit' u.pk %}">Edytuj</a>
+      <form method="post" action="{% url 'user_action' u.pk 'reset' %}">{% csrf_token %}<button>Reset hasła</button></form>
+      <form method="post" action="{% url 'user_action' u.pk 'block' %}">{% csrf_token %}<button>{% if u.is_active %}Zablokuj{% else %}Odblokuj{% endif %}</button></form>
+      <form method="post" action="{% url 'user_action' u.pk 'delete' %}" onsubmit="return confirm('Usunąć konto?')">{% csrf_token %}<button>Usuń</button></form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

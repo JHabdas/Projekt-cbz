@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Hasło jednorazowe dla {{ target.username }}</h1>
+<p style="font-size: 24px"><b>{{ otp }}</b></p>
+<p>Ważne 24 h. Przy pierwszym logowaniu trzeba je zmienić.</p>
+<p><a href="{% url 'users' %}">Wróć do listy</a></p>
+{% endblock %}
