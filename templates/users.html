@@ -8,7 +8,7 @@
   <tr>
     <td>{{ u.username }}</td>
     <td>{{ u.role }}</td>
-    <td>{% if u.is_active %}aktywne{% else %}zablokowane{% endif %}{% if u.must_change_password %}, hasło jednorazowe{% endif %}</td>
+    <td>{% if u.is_active %}aktywne{% else %}zablokowane{% endif %}{% if u.must_change_password %}, hasło jednorazowe{% endif %}{% if u.lock_remaining %}, zablokowane czasowo{% endif %}</td>
     <td>
       <a href="{% url 'user_edit' u.pk %}">Edytuj</a>
       <form method="post" action="{% url 'user_action' u.pk 'reset' %}">{% csrf_token %}<button>Reset hasła</button></form>

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 
@@ -33,3 +34,8 @@ class Command(BaseCommand):
             user = User.objects.create(username=username)
             user.groups.add(Group.objects.get(name=role))
             self.stdout.write(f"{username:<14} {role:<14} {user.set_one_time_password()}")
+        if not User.objects.filter(username=settings.TRAP_USERNAME).exists():
+            trap = User(username=settings.TRAP_USERNAME, must_change_password=False)
+            trap.set_unusable_password()
+            trap.save()
+            self.stdout.write(f"{settings.TRAP_USERNAME:<14} konto-pułapka")

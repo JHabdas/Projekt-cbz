@@ -2,5 +2,13 @@
 {% block content %}
 <h1>Logowanie</h1>
 {% if error %}<p class="error">{{ error }}</p>{% endif %}
-<form method="post">{% csrf_token %}{{ form.as_p }}<button>Zaloguj</button></form>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="hp" aria-hidden="true">
+    <label>Strona WWW <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+  </div>
+  {% include "captcha.html" %}
+  <button>Zaloguj</button>
+</form>
 {% endblock %}

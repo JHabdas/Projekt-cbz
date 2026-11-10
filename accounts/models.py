@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -10,6 +11,8 @@ from django.utils.crypto import get_random_string
 class User(AbstractUser):
     must_change_password = models.BooleanField(default=True)
     otp_expires_at = models.DateTimeField(null=True, blank=True)
+    failed_logins = models.PositiveIntegerField(default=0)
+    locked_until = models.DateTimeField(null=True, blank=True)
 
     @property
     def role(self):
@@ -23,6 +26,23 @@ class User(AbstractUser):
         days = SecuritySettings.get().password_days
         last = self.history.first()
         return bool(days and last and timezone.now() > last.created_at + timedelta(days=days))
+
+    def lock_remaining(self):
+        if self.locked_until and self.locked_until > timezone.now():
+            return self.locked_until - timezone.now()
+        return None
+
+    def register_failed_login(self):
+        self.failed_logins += 1
+        if self.failed_logins >= SecuritySettings.get().max_failed_logins:
+            self.failed_logins = 0
+            self.locked_until = timezone.now() + timedelta(minutes=settings.LOCKOUT_MINUTES)
+        self.save(update_fields=["failed_logins", "locked_until"])
+
+    def reset_failed_logins(self):
+        self.failed_logins = 0
+        self.locked_until = None
+        self.save(update_fields=["failed_logins", "locked_until"])
 
     def set_one_time_password(self):
         otp = get_random_string(14)
@@ -48,6 +68,9 @@ class SecuritySettings(models.Model):
     )
     hibp_enabled = models.BooleanField("Sprawdzanie hasła w Have I Been Pwned", default=False)
     password_days = models.PositiveIntegerField("Ważność hasła w dniach (0 = bez limitu)", default=0)
+    max_failed_logins = models.PositiveIntegerField(
+    "Liczba błędnych logowań do blokady konta", default=5, validators=[MinValueValidator(1)]
+    )    
     session_minutes = models.PositiveIntegerField(
         "Wylogowanie po bezczynności (minuty)", default=15, validators=[MinValueValidator(1)]
     )
