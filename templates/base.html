@@ -15,6 +15,7 @@ input, select { padding: 6px; }
 .error, .errorlist { color: #b00; }
 .hp { position: absolute; left: -10000px; }
 .cf-turnstile { margin: 8px 0 12px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 </style>
 </head>
 <body>
@@ -24,6 +25,7 @@ input, select { padding: 6px; }
   {% if perms.accounts.view_note %}<a href="{% url 'notes' %}">Notatki</a>{% endif %}
   {% if perms.accounts.change_user %}<a href="{% url 'users' %}">Użytkownicy</a>{% endif %}
   {% if perms.accounts.change_securitysettings %}<a href="{% url 'settings' %}">Ustawienia</a>{% endif %}
+  {% if perms.accounts.change_securitysettings %}<a href="{% url 'logs' %}">Dziennik</a>{% endif %}
   <a href="{% url 'change_password' %}">Zmień hasło</a>
   <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button>Wyloguj ({{ user.username }})</button></form>
 </nav>

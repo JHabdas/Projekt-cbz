@@ -14,4 +14,5 @@ urlpatterns = [
     path("uzytkownicy/<int:pk>/", views.user_form, name="user_edit"),
     path("uzytkownicy/<int:pk>/<str:action>/", views.user_action, name="user_action"),
     path("ustawienia/", views.settings_view, name="settings"),
+    path("dziennik/", views.log_view, name="logs"),
 ]

@@ -2,6 +2,7 @@ import logging
 
 import requests
 from django.conf import settings
+from .audit import log_event
 
 logger = logging.getLogger("security")
 
@@ -33,6 +34,7 @@ def turnstile_ok(request):
 
 def canary_alert(request, username):
     logger.warning("Konto-pułapka: próba logowania na '%s' z IP %s", username, client_ip(request))
+    log_event(request, "KONTO_PULAPKA", "Próba logowania na konto-pułapkę", False, username)
     if settings.CANARY_LOGIN_URL:
         try:
             requests.get(settings.CANARY_LOGIN_URL, params={"ip": client_ip(request)}, timeout=5)

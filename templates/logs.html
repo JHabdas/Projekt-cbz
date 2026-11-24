@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Dziennik zdarzeń</h1>
+{% if broken %}<p class="error">Nie można odczytać pliku dziennika: plik jest uszkodzony.</p>{% endif %}
+<form method="get" class="filters">
+  <input name="user" placeholder="Użytkownik" value="{{ filters.user }}">
+  <select name="action">
+    <option value="">Wszystkie zdarzenia</option>
+    {% for code, name in actions.items %}
+    <option value="{{ code }}"{% if code == filters.action %} selected{% endif %}>{{ name }}</option>
+    {% endfor %}
+  </select>
+  <label>od <input type="date" name="date_from" value="{{ filters.date_from }}"></label>
+  <label>do <input type="date" name="date_to" value="{{ filters.date_to }}"></label>
+  <button>Filtruj</button>
+  <a href="?{{ query }}{% if query %}&{% endif %}export=1">Eksportuj do pliku</a>
+</form>
+<form method="post" class="filters">{% csrf_token %}<button>Sprawdź integralność</button></form>
+<p>Liczba wpisów: {{ rows|length }}. Czas w UTC.</p>
+<table>
+  <tr><th>Czas (UTC)</th><th>Użytkownik</th><th>IP</th><th>Akcja</th><th>Opis</th><th>Wynik</th></tr>
+  {% for e in rows %}
+  <tr><td>{{ e.czas|slice:":10" }} {{ e.czas|slice:"11:19" }}</td><td>{{ e.uzytkownik }}</td><td>{{ e.ip }}</td><td>{{ e.akcja }}</td><td>{{ e.opis }}</td><td>{{ e.wynik }}</td></tr>
+  {% empty %}
+  <tr><td colspan="6">Brak wpisów.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

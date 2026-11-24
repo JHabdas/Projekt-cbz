@@ -29,6 +29,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "accounts.middleware.AccountMiddleware",
+    "accounts.middleware.AccessDeniedMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -66,6 +67,7 @@ TURNSTILE_SECRET_KEY = "1x0000000000000000000000000000000AA"
 CANARY_LOGIN_URL = ""
 TRAP_USERNAME = "administrator"
 LOCKOUT_MINUTES = 15
+LOG_DIR = BASE_DIR / "logs"
 
 LANGUAGE_CODE = "pl"
 TIME_ZONE = "Europe/Warsaw"
